@@ -6,7 +6,6 @@
 #include "drawer.h"
 
 using namespace std;
-#define EXP
 
 f32 random_speed(f32 const start, f32 const end) {
     random_device rd;
@@ -16,7 +15,7 @@ f32 random_speed(f32 const start, f32 const end) {
 }
 
 bool game_c::initialize() noexcept {
-    if (auto retv = SDL_Init(SDL_INIT_VIDEO); retv != 0) {
+    if (auto err = SDL_Init(SDL_INIT_VIDEO); err) {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return false;
     }
@@ -24,7 +23,8 @@ bool game_c::initialize() noexcept {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return false;
     }
-    drawer_ = drawer_c(window_);
+    if (drawer_ = drawer_c(window_); !drawer_.ok())
+        return false;
 
     paddle_pos_ = {12.f, WINDOW_HEIGHT / 2.f};
     ball_pos_ = {WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f};
@@ -92,8 +92,9 @@ void game_c::update_game() noexcept {
     ball_pos_.x += ball_velocity_.x * delta_time;
     ball_pos_.y += ball_velocity_.y * delta_time;
 
+    //------- horizontal movement of the ball
     if (ball_velocity_.x < 0.f) {
-        // Piłka porusza się w lewo.
+        // The ball moves to the left
         auto diff = paddle_pos_.y - ball_pos_.y;
         diff = (diff > 0.f) ? diff : -diff;
         if (diff > PADDLE_HEIGHT / 2.f) {
@@ -102,24 +103,26 @@ void game_c::update_game() noexcept {
                 return;
             }
         } else if ((ball_pos_.x - BALL_RADIUS) <= (paddle_pos_.x + THICKNESS / 2.0)) {
+            // the ball bounces off the paddle
             ball_velocity_.x *= -1.f;
         }
     } else if (ball_velocity_.x > 0.f) {
-        // Piłka porusza się w prawo.
+        // the ball moves to the right
         if ((ball_pos_.x + BALL_RADIUS) > RIGHT_BORDER)
-            // Piłka odbija sie od prawej ściany
+            // the ball bounces off the right wall
             ball_velocity_.x *= -1.f;
     }
 
+    //------- vertical movement of the ball
     if (ball_velocity_.y < 0.f) {
-        // Piłka powusza się do góry
+        // the ball moves upwards
         if ((ball_pos_.y - BALL_RADIUS) <= TOP_BORDER)
-            // Piłka odbija sie od górnej ściany
+            //the ball bounces off the upper wall
             ball_velocity_.y *= -1.f;
     } else if (ball_velocity_.y > 0.f) {
-        // Piłka porusz się w dół.
+        // the ball moves downwards
         if ((ball_pos_.y + BALL_RADIUS) >= BOTTOM_BORDER)
-            // Piłka odbija się od dolnej ściany.
+            // the ball bounces off the bottom wall
             ball_velocity_.y *= -1.f;
     }
 }
@@ -128,31 +131,28 @@ void game_c::generate_output() noexcept {
     drawer_.draw_color({0, 40, 30, 255});
     drawer_.clear();
 
-    // Draw walls
+    //------- draw walls
     drawer_.draw_color({255, 255, 255, 255});
-    // Draw top wall
+    // draw the top wall
     drawer_.fill_rect({0, 0, WINDOW_WIDTH, THICKNESS});
-    // Draw bottom wall
+    // draw the bottom wall
     drawer_.fill_rect({0, WINDOW_HEIGHT - THICKNESS, WINDOW_WIDTH, THICKNESS});
-    // Draw right wall
+    // draw the right wall
     drawer_.fill_rect({WINDOW_WIDTH - THICKNESS, 0, THICKNESS, WINDOW_WIDTH});
 
-    // Draw paddle
-    drawer_.draw_color({ 255, 0, 0, 255});
-    drawer_.fill_rect({paddle_pos_.x -THICKNESS/2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
+    // draw the paddle paddle
+    drawer_.draw_color({255, 0, 0, 255});
+    drawer_.fill_rect({paddle_pos_.x - THICKNESS / 2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
 
-    // Draw ball
+    // draw the ball
     drawer_.draw_color({255, 255, 255, 255});
-    drawer_.draw_circle({ball_pos_.x, ball_pos_.y},  THICKNESS / 2.f);
+    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
 
     drawer_.present();
-//    SDL_RenderPresent(renderer_);
 }
 
 void game_c::shutdown() noexcept {
     drawer_.destroy();
-//    if (renderer_)
-//        SDL_DestroyRenderer(renderer_);
     if (window_)
         SDL_DestroyWindow(window_);
     SDL_Quit();

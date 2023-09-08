@@ -28,7 +28,7 @@ public:
         }
     }
 
-    [[nodiscard]] bool valid() const noexcept {
+    [[nodiscard]] bool ok() const noexcept {
         return renderer_ != nullptr;
     }
 

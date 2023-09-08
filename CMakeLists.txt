@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(sdl_test)
 set(CMAKE_CXX_STANDARD 20)
-#set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-03")
 
 set(SDL_INCLUDE_DIR C:/Users/user/Projects/SDL/include)
 set(SDL_LIBRARY C:/Users/user/Projects/SDL/VisualC/x64/Release/SDL3.lib)
