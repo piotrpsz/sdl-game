@@ -28,6 +28,10 @@ public:
         }
     }
 
+    [[nodiscard]] SDL_Renderer* renderer() const noexcept {
+        return renderer_;
+    }
+
     [[nodiscard]] bool ok() const noexcept {
         return renderer_ != nullptr;
     }

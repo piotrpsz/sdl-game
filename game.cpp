@@ -26,6 +26,22 @@ bool game_c::initialize() noexcept {
     if (drawer_ = drawer_c(window_); !drawer_.ok())
         return false;
 
+    IMG_Init(IMG_INIT_PNG);
+
+    auto surface = IMG_Load("../assets/ball.png");
+    if (surface == nullptr) {
+        SDL_Log("Failed to load texture file: %s", SDL_GetError());
+        return false;
+    }
+    auto texture = SDL_CreateTextureFromSurface(drawer_.renderer(), surface);
+    if (texture == nullptr) {
+        SDL_Log("Failed to convert surface to texture: %s", SDL_GetError());
+        return false;
+    }
+    SDL_DestroySurface(surface);
+    ball_ = texture;
+
+
     paddle_pos_ = {12.f, WINDOW_HEIGHT / 2.f};
     ball_pos_ = {WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f};
 
@@ -146,7 +162,10 @@ void game_c::generate_output() noexcept {
 
     // draw the ball
     drawer_.draw_color({255, 255, 255, 255});
-    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
+//    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
+    rect_t r{ball_pos_.x, ball_pos_.y, 16.f, 16.f};
+    if (auto retv = SDL_RenderTexture(drawer_.renderer(), ball_, nullptr, &r); retv)
+        SDL_Log("Failed to render texture: %s", SDL_GetError());
 
     drawer_.present();
 }
@@ -155,5 +174,7 @@ void game_c::shutdown() noexcept {
     drawer_.destroy();
     if (window_)
         SDL_DestroyWindow(window_);
+
+    IMG_Quit();
     SDL_Quit();
 }
