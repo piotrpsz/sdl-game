@@ -1,6 +1,6 @@
-#include "draw.h"
+#include "drawer.h"
 
-void draw_circle(SDL_Renderer* const renderer, SDL_FPoint const center, int const radius) {
+void drawer_c::draw_circle(point_t const center, int const radius) const noexcept {
     auto v = radius * 8 * 35 / 49;
     auto const n = (v + 7) & -8;
     SDL_FPoint points[n];
@@ -35,5 +35,5 @@ void draw_circle(SDL_Renderer* const renderer, SDL_FPoint const center, int cons
             error += (tx - diameter);
         }
     }
-    SDL_RenderPoints(renderer, points, count);
+    SDL_RenderPoints(renderer_, points, count);
 }
