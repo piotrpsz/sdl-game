@@ -1,9 +1,12 @@
 #include "game.h"
-#include "draw.h"
+#include "drawer.h"
 #include <utility>
 #include <random>
 #include <iostream>
+#include "drawer.h"
+
 using namespace std;
+#define EXP
 
 f32 random_speed(f32 const start, f32 const end) {
     random_device rd;
@@ -21,11 +24,7 @@ bool game_c::initialize() noexcept {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return false;
     }
-    if (renderer_ = SDL_CreateRenderer(window_, nullptr, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-            renderer_ == nullptr) {
-        SDL_Log("Failed to create renderer: %s", SDL_GetError());
-        return false;
-    }
+    drawer_ = drawer_c(window_);
 
     paddle_pos_ = {12.f, WINDOW_HEIGHT / 2.f};
     ball_pos_ = {WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f};
@@ -83,8 +82,7 @@ void game_c::update_game() noexcept {
         paddle_pos_.y += -300.f * delta_time;
         if (paddle_pos_.y < (PADDLE_HEIGHT / 2.f + THICKNESS + 1))
             paddle_pos_.y = PADDLE_HEIGHT / 2.f + THICKNESS + 1;
-    }
-    else if (paddle_direction_ == Direction::Down) {
+    } else if (paddle_direction_ == Direction::Down) {
         paddle_pos_.y += 300.f * delta_time;
         if (paddle_pos_.y > (WINDOW_HEIGHT - PADDLE_HEIGHT / 2.f - THICKNESS - 1))
             paddle_pos_.y = WINDOW_HEIGHT - PADDLE_HEIGHT / 2.f - THICKNESS - 1;
@@ -98,16 +96,15 @@ void game_c::update_game() noexcept {
         // Piłka porusza się w lewo.
         auto diff = paddle_pos_.y - ball_pos_.y;
         diff = (diff > 0.f) ? diff : -diff;
-        if (diff > PADDLE_HEIGHT/2.f) {
+        if (diff > PADDLE_HEIGHT / 2.f) {
             if ((ball_pos_.x - BALL_RADIUS) <= 0) {
                 is_running = false;
                 return;
             }
-        } else if ((ball_pos_.x - BALL_RADIUS) <= (paddle_pos_.x + THICKNESS/2.0)) {
+        } else if ((ball_pos_.x - BALL_RADIUS) <= (paddle_pos_.x + THICKNESS / 2.0)) {
             ball_velocity_.x *= -1.f;
         }
-    }
-    else if (ball_velocity_.x > 0.f) {
+    } else if (ball_velocity_.x > 0.f) {
         // Piłka porusza się w prawo.
         if ((ball_pos_.x + BALL_RADIUS) > RIGHT_BORDER)
             // Piłka odbija sie od prawej ściany
@@ -119,8 +116,7 @@ void game_c::update_game() noexcept {
         if ((ball_pos_.y - BALL_RADIUS) <= TOP_BORDER)
             // Piłka odbija sie od górnej ściany
             ball_velocity_.y *= -1.f;
-    }
-    else if (ball_velocity_.y > 0.f) {
+    } else if (ball_velocity_.y > 0.f) {
         // Piłka porusz się w dół.
         if ((ball_pos_.y + BALL_RADIUS) >= BOTTOM_BORDER)
             // Piłka odbija się od dolnej ściany.
@@ -129,40 +125,34 @@ void game_c::update_game() noexcept {
 }
 
 void game_c::generate_output() noexcept {
-    SDL_SetRenderDrawColor(renderer_, 0, 40, 30, 255);
-    SDL_RenderClear(renderer_);
+    drawer_.draw_color({0, 40, 30, 255});
+    drawer_.clear();
 
     // Draw walls
-    SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
+    drawer_.draw_color({255, 255, 255, 255});
     // Draw top wall
-    SDL_FRect wall{0, 0, WINDOW_WIDTH, THICKNESS};
-    SDL_RenderFillRect(renderer_, &wall);
+    drawer_.fill_rect({0, 0, WINDOW_WIDTH, THICKNESS});
     // Draw bottom wall
-    wall.y = WINDOW_HEIGHT - THICKNESS;
-    SDL_RenderFillRect(renderer_, &wall);
+    drawer_.fill_rect({0, WINDOW_HEIGHT - THICKNESS, WINDOW_WIDTH, THICKNESS});
     // Draw right wall
-    wall = {WINDOW_WIDTH - THICKNESS, 0, THICKNESS, WINDOW_WIDTH};
-    SDL_RenderFillRect(renderer_, &wall);
+    drawer_.fill_rect({WINDOW_WIDTH - THICKNESS, 0, THICKNESS, WINDOW_WIDTH});
 
     // Draw paddle
-    SDL_SetRenderDrawColor(renderer_, 255, 0, 0, 255);
-    SDL_FRect paddle{paddle_pos_.x -THICKNESS/2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT};
-    SDL_RenderFillRect(renderer_, &paddle);
+    drawer_.draw_color({ 255, 0, 0, 255});
+    drawer_.fill_rect({paddle_pos_.x -THICKNESS/2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
 
     // Draw ball
-    SDL_SetRenderDrawColor(renderer_, 255, 255, 255, 255);
-    auto const r = THICKNESS / 2.f;
-    draw_circle(renderer_, SDL_FPoint{ball_pos_.x, ball_pos_.y}, r);
-//    SDL_FRect ball{ball_pos_.x - THICKNESS/2.f, ball_pos_.y - THICKNESS/2.f, THICKNESS, THICKNESS};
-//   SDL_RenderFillRect(renderer_, &ball);
+    drawer_.draw_color({255, 255, 255, 255});
+    drawer_.draw_circle({ball_pos_.x, ball_pos_.y},  THICKNESS / 2.f);
 
-    SDL_RenderPresent(renderer_);
-
+    drawer_.present();
+//    SDL_RenderPresent(renderer_);
 }
 
 void game_c::shutdown() noexcept {
-    if (renderer_)
-        SDL_DestroyRenderer(renderer_);
+    drawer_.destroy();
+//    if (renderer_)
+//        SDL_DestroyRenderer(renderer_);
     if (window_)
         SDL_DestroyWindow(window_);
     SDL_Quit();

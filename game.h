@@ -1,18 +1,14 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include "drawer.h"
 #include "types.h"
-
-//C:\Users\user\Projects\cpp\gameprogcpp.code\External\SDL\include\SDL\SDL_timer.h
-
 
 enum class Direction {
     Unknown = 0,
     Up = -1,
     Down = 1
 };
-
-
 
 class game_c final{
     constexpr static f32 THICKNESS = 15;
@@ -26,7 +22,7 @@ class game_c final{
     constexpr static f32 BALL_RADIUS = THICKNESS/2.f;
 
     SDL_Window* window_{};
-    SDL_Renderer* renderer_ = {};
+    drawer_c drawer_{};
     bool is_running{true};
     u32 ticks_count_{};
 
