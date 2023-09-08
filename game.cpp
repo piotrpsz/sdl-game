@@ -28,8 +28,9 @@ bool game_c::initialize() noexcept {
 
     IMG_Init(IMG_INIT_PNG);
 
-    auto surface = IMG_Load("../assets/ball.png");
+    auto surface = IMG_Load("../assets/tennis.png");
     if (surface == nullptr) {
+
         SDL_Log("Failed to load texture file: %s", SDL_GetError());
         return false;
     }
@@ -38,6 +39,9 @@ bool game_c::initialize() noexcept {
         SDL_Log("Failed to convert surface to texture: %s", SDL_GetError());
         return false;
     }
+//    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_BEST);
+
     SDL_DestroySurface(surface);
     ball_ = texture;
 
@@ -83,7 +87,7 @@ void game_c::process_input() noexcept {
 }
 
 void game_c::update_game() noexcept {
-    auto const deadline = 10;
+    auto const deadline = 16;
     // Wait until 16ms has elapsed since last frame
     while (SDL_GetTicks() < (ticks_count_ + deadline));
 
@@ -144,7 +148,8 @@ void game_c::update_game() noexcept {
 }
 
 void game_c::generate_output() noexcept {
-    drawer_.draw_color({0, 40, 30, 255});
+//    drawer_.draw_color({100, 100, 100, 255});
+    drawer_.draw_color({20, 40, 60, 255});
     drawer_.clear();
 
     //------- draw walls
@@ -161,9 +166,9 @@ void game_c::generate_output() noexcept {
     drawer_.fill_rect({paddle_pos_.x - THICKNESS / 2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
 
     // draw the ball
-    drawer_.draw_color({255, 255, 255, 255});
+//    drawer_.draw_color({255, 255, 255, 255});
 //    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
-    rect_t r{ball_pos_.x, ball_pos_.y, 16.f, 16.f};
+    rect_t r{ball_pos_.x - BALL_RADIUS/2.f, ball_pos_.y-BALL_RADIUS/2.f, 2.f * BALL_RADIUS, 2.f * BALL_RADIUS};
     if (auto retv = SDL_RenderTexture(drawer_.renderer(), ball_, nullptr, &r); retv)
         SDL_Log("Failed to render texture: %s", SDL_GetError());
 

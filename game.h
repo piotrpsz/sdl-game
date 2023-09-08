@@ -18,7 +18,7 @@ class game_c final{
     constexpr static f32 WINDOW_HEIGHT = 700;
     constexpr static f32 TOP_BORDER = THICKNESS;
     constexpr static f32 BOTTOM_BORDER = WINDOW_HEIGHT - THICKNESS;
-    constexpr static f32 LEFT_BORDER = THICKNESS;
+//    constexpr static f32 LEFT_BORDER = THICKNESS;
     constexpr static f32 RIGHT_BORDER = WINDOW_WIDTH - THICKNESS;
     constexpr static f32 BALL_RADIUS = THICKNESS/2.f;
 
