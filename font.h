@@ -2,8 +2,8 @@
 // Created by Piotr Pszczółkowski on 10/09/2023.
 //
 
-#ifndef SDL_GAME_FONT_T_H
-#define SDL_GAME_FONT_T_H
+#ifndef SDL_GAME_FONT_H
+#define SDL_GAME_FONT_H
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -22,4 +22,4 @@ public:
 };
 
 
-#endif //SDL_GAME_FONT_T_H
+#endif //SDL_GAME_FONT_H

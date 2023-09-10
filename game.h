@@ -3,7 +3,7 @@
 #include <SDL3/SDL.h>
 #include <SDL_image.h>
 #include "drawer.h"
-#include "font_t.h"
+#include "font.h"
 #include "types.h"
 
 enum class Direction {

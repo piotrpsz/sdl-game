@@ -15,8 +15,8 @@ add_executable(sdl_game main.cpp
         drawer.cpp
         drawer.h
         types.h
-        font_t.cpp
-        font_t.h
+        font.cpp
+        font.h
 )
 
 target_link_libraries(sdl_game PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
