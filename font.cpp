@@ -43,6 +43,7 @@ optional<SDL_Texture*> font_t::render_text(SDL_Renderer* const renderer, std::st
                 SDL_Log("Failed to create text textutr from surface");
                 return nullopt;
             }
+            SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_BEST);
             return texture;
         }
     }

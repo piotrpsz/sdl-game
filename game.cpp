@@ -18,10 +18,29 @@ bool game_c::initialize() noexcept {
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return false;
     }
+
+
+    int n{};
+    auto _ = SDL_GetDisplays(&n);
+    int x{}, y{};
+    if (n > 1) {
+        SDL_Rect r{};
+        SDL_GetDisplayBounds(2, &r);
+        x = r.x + (r.w - WINDOW_WIDTH)/2;
+        y = r.y + (r.h - WINDOW_HEIGHT)/2;
+    } else {
+        SDL_Rect r{};
+        SDL_GetDisplayBounds(1, &r);
+        x = r.x + (r.w - WINDOW_WIDTH)/2;
+        y = r.y + (r.h - WINDOW_HEIGHT)/2;
+    }
+
     if (window_ = SDL_CreateWindow("My SDL game", WINDOW_WIDTH, WINDOW_HEIGHT, 0); window_ == nullptr) {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return false;
     }
+    SDL_SetWindowPosition(window_, x, y);
+
     if (drawer_ = drawer_c(window_); !drawer_.ok())
         return false;
 
@@ -60,6 +79,7 @@ bool game_c::initialize() noexcept {
     ball_velocity_ = {vx, vy};
     cout << "vx: " << vx << ", vy: " << vy << '\n';
 //    ball_velocity_ = {-50.f, 90.f};
+
     return true;
 }
 
