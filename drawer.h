@@ -28,7 +28,7 @@ public:
         }
     }
 
-    [[nodiscard]] SDL_Renderer* renderer() const noexcept {
+    SDL_Renderer* operator()() {
         return renderer_;
     }
 

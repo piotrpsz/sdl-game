@@ -59,7 +59,7 @@ bool game_c::initialize() noexcept {
         SDL_Log("Failed to load texture file: %s", SDL_GetError());
         return false;
     }
-    auto texture = SDL_CreateTextureFromSurface(drawer_.renderer(), surface);
+    auto texture = SDL_CreateTextureFromSurface(drawer_(), surface);
     if (texture == nullptr) {
         SDL_Log("Failed to convert surface to texture: %s", SDL_GetError());
         return false;
@@ -70,8 +70,7 @@ bool game_c::initialize() noexcept {
     SDL_DestroySurface(surface);
     ball_ = texture;
 
-
-    paddle_pos_ = {12.f, WINDOW_HEIGHT / 2.f};
+    paddle_pos_ = {6.f, WINDOW_HEIGHT / 2.f};
     ball_pos_ = {WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f};
 
     auto const vx = random_speed(-100.0f, -70.f);
@@ -117,11 +116,9 @@ void game_c::update_game() noexcept {
     // Wait until 16ms has elapsed since last frame
     while (SDL_GetTicks() < (ticks_count_ + deadline));
 
-    // Delta time is the difference in ticks from last frame
-    // (converted to seconds)
+    // Delta time is the difference in ticks from last frame (in seconds)
     auto delta_time = static_cast<f32>(SDL_GetTicks() - ticks_count_ + deadline) / 1000.f;
-    if (delta_time > .05f)
-        delta_time = .05f;
+    if (delta_time > .05f) delta_time = .05f;
     ticks_count_ = SDL_GetTicks();
 
     if (paddle_direction_ == Direction::Up) {
@@ -148,7 +145,7 @@ void game_c::update_game() noexcept {
                 is_running = false;
                 return;
             }
-        } else if ((ball_pos_.x - BALL_RADIUS) <= (paddle_pos_.x + THICKNESS / 2.0)) {
+        } else if ((ball_pos_.x - BALL_RADIUS) <= ((paddle_pos_.x + PADDLE_WIDTH/2.0)-5.f)) {
             // the ball bounces off the paddle
             scores_ += 1;
             ball_velocity_.x *= -1.f;
@@ -163,12 +160,12 @@ void game_c::update_game() noexcept {
     //------- vertical movement of the ball
     if (ball_velocity_.y < 0.f) {
         // the ball moves upwards
-        if ((ball_pos_.y - BALL_RADIUS) <= TOP_BORDER)
+        if ((ball_pos_.y - BALL_RADIUS) <= (TOP_BORDER-1.f))
             //the ball bounces off the upper wall
             ball_velocity_.y *= -1.f;
     } else if (ball_velocity_.y > 0.f) {
         // the ball moves downwards
-        if ((ball_pos_.y + BALL_RADIUS) >= BOTTOM_BORDER)
+        if ((ball_pos_.y + BALL_RADIUS) >= (BOTTOM_BORDER-3.f))
             // the ball bounces off the bottom wall
             ball_velocity_.y *= -1.f;
     }
@@ -190,19 +187,19 @@ void game_c::generate_output() noexcept {
 
     // draw the paddle paddle
     drawer_.draw_color({255, 0, 0, 255});
-    drawer_.fill_rect({paddle_pos_.x - THICKNESS / 2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
+    drawer_.fill_rect({paddle_pos_.x - PADDLE_WIDTH/2.f, paddle_pos_.y - PADDLE_HEIGHT/2.f, PADDLE_WIDTH, PADDLE_HEIGHT});
 
     {
         char buffer[128];
         snprintf(buffer, 128, "Scores: %d", scores_);
         string text{buffer};
-        auto const size = 20;
+        auto const size = 14;
         if (auto const geometry = font.text_geometry(text, size)) {
             auto const [w, h] = *geometry;
-            rect_t const output_rect{2, THICKNESS + 2, w, h};
-            if (auto const texture = font.render_text(drawer_.renderer(), text, size, {0, 255, 0, 255}))
+            rect_t const output_rect{2, 2, w, h};
+            if (auto const texture = font.render_text(drawer_(), text, size, {0, 0, 0, 255}))
 
-                SDL_RenderTexture(drawer_.renderer(), *texture, nullptr, &output_rect);
+                SDL_RenderTexture(drawer_(), *texture, nullptr, &output_rect);
         }
     }
 
@@ -210,7 +207,7 @@ void game_c::generate_output() noexcept {
 //    drawer_.draw_color({255, 255, 255, 255});
 //    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
     rect_t r{ball_pos_.x - BALL_RADIUS/2.f, ball_pos_.y-BALL_RADIUS/2.f, 2.f * BALL_RADIUS, 2.f * BALL_RADIUS};
-    if (auto retv = SDL_RenderTexture(drawer_.renderer(), ball_, nullptr, &r); retv)
+    if (auto retv = SDL_RenderTexture(drawer_(), ball_, nullptr, &r); retv)
         SDL_Log("Failed to render texture: %s", SDL_GetError());
 
     drawer_.present();

@@ -15,6 +15,7 @@ enum class Direction {
 class game_c final{
     constexpr static f32 THICKNESS = 15;
     constexpr static f32 PADDLE_HEIGHT = 100.;
+    constexpr static f32 PADDLE_WIDTH = 5.f;
     constexpr static f32 WINDOW_WIDTH = 1200;
     constexpr static f32 WINDOW_HEIGHT = 700;
     constexpr static f32 TOP_BORDER = THICKNESS;

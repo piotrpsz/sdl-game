@@ -27,9 +27,11 @@ bool font_t::load(std::string const& file_name) noexcept {
 optional<pair<f32, f32>> font_t::text_geometry(const std::string& text, int size) const noexcept {
     int width{}, height{};
 
-    if (auto it = data_.find(size); it != data_.end())
+    if (auto it = data_.find(size); it != data_.end()) {
+        TTF_SetFontStyle(it->second, TTF_STYLE_BOLD);
         if (TTF_SizeText(it->second, text.c_str(), &width, &height) == 0)
             return make_pair(static_cast<f32>(width), static_cast<f32>(height));
+    }
 
     return nullopt;
 }
