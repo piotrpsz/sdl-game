@@ -2,7 +2,8 @@
 #include "drawer.h"
 #include <random>
 #include <iostream>
-
+#include <format>
+#include <cstdio>
 using namespace std;
 
 f32 random_speed(f32 const start, f32 const end) {
@@ -31,6 +32,7 @@ bool game_c::initialize() noexcept {
         return false;
     }
     font.load("/Users/piotr/Projects/cpp/sdl-game/assets/Carlito-Regular.ttf");
+//    font.load("/System/Library/Fonts/Helvetica.ttc");
 
     auto surface = IMG_Load("../assets/tennis.png");
     if (surface == nullptr) {
@@ -128,6 +130,7 @@ void game_c::update_game() noexcept {
             }
         } else if ((ball_pos_.x - BALL_RADIUS) <= (paddle_pos_.x + THICKNESS / 2.0)) {
             // the ball bounces off the paddle
+            scores_ += 1;
             ball_velocity_.x *= -1.f;
         }
     } else if (ball_velocity_.x > 0.f) {
@@ -170,12 +173,16 @@ void game_c::generate_output() noexcept {
     drawer_.fill_rect({paddle_pos_.x - THICKNESS / 2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
 
     {
-        string text{"Scores: 123"};
-        auto const size = 30;
+        char buffer[128];
+        snprintf(buffer, 128, "Scores: %d", scores_);
+        string text{buffer};
+//        string text{"Scores: 123 Pszczolkowski"};
+        auto const size = 20;
         if (auto const geometry = font.text_geometry(text, size)) {
             auto const [w, h] = *geometry;
-            rect_t const output_rect{100, 100, w, h};
+            rect_t const output_rect{2, THICKNESS + 2, w, h};
             if (auto const texture = font.render_text(drawer_.renderer(), text, size, {0, 255, 0, 255}))
+
                 SDL_RenderTexture(drawer_.renderer(), *texture, nullptr, &output_rect);
         }
     }

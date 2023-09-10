@@ -28,6 +28,7 @@ class game_c final{
     drawer_c drawer_{};
     bool is_running{true};
     u32 ticks_count_{};
+    int scores_{};
 
     Direction paddle_direction_{Direction::Unknown};
     vec2_t paddle_pos_{};
