@@ -9,8 +9,9 @@ using u64 = uint64_t;
 using f32 = float;
 using f64 = double;
 
-struct color_t { u8 r, g, b, a; };
+
 struct vec2_t { f32 x, y; };
+using color_t = SDL_Color;
 using rect_t = SDL_FRect;
 using point_t = SDL_FPoint;
 

@@ -28,6 +28,12 @@ bool game_c::initialize() noexcept {
 
     IMG_Init(IMG_INIT_PNG);
 
+    if (TTF_Init() != 0) {
+        SDL_Log("Can't init TTF library: %s", SDL_GetError());
+        return false;
+    }
+    font.load("/Users/piotr/Projects/cpp/sdl-game/assets/Carlito-Regular.ttf");
+
     auto surface = IMG_Load("../assets/tennis.png");
     if (surface == nullptr) {
 
@@ -165,6 +171,21 @@ void game_c::generate_output() noexcept {
     drawer_.draw_color({255, 0, 0, 255});
     drawer_.fill_rect({paddle_pos_.x - THICKNESS / 2.f, paddle_pos_.y - PADDLE_HEIGHT / 2, THICKNESS, PADDLE_HEIGHT});
 
+    {
+        string text{"Scores: 123"};
+        auto const size = 30;
+        if (auto const [w, h] = font.string_geometry(text, size); w > 0. && h > 0.) {
+            rect_t const output_rect{100, 100, w, h};
+            if (auto r = font.render_text(drawer_.renderer(), text, size, {0, 255, 0, 255}); r.has_value())
+                SDL_RenderTexture(drawer_.renderer(), r.value(), nullptr, &output_rect);
+        }
+
+
+
+
+
+    }
+
     // draw the ball
 //    drawer_.draw_color({255, 255, 255, 255});
 //    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
@@ -181,5 +202,6 @@ void game_c::shutdown() noexcept {
         SDL_DestroyWindow(window_);
 
     IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
 }

@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <SDL_image.h>
 #include "drawer.h"
+#include "font_t.h"
 #include "types.h"
 
 enum class Direction {
@@ -18,11 +19,11 @@ class game_c final{
     constexpr static f32 WINDOW_HEIGHT = 700;
     constexpr static f32 TOP_BORDER = THICKNESS;
     constexpr static f32 BOTTOM_BORDER = WINDOW_HEIGHT - THICKNESS;
-//    constexpr static f32 LEFT_BORDER = THICKNESS;
     constexpr static f32 RIGHT_BORDER = WINDOW_WIDTH - THICKNESS;
     constexpr static f32 BALL_RADIUS = THICKNESS/2.f;
 
     SDL_Window* window_{};
+    font_t font{};
     SDL_Texture* ball_{};
     drawer_c drawer_{};
     bool is_running{true};
