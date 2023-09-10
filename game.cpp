@@ -176,7 +176,6 @@ void game_c::generate_output() noexcept {
         char buffer[128];
         snprintf(buffer, 128, "Scores: %d", scores_);
         string text{buffer};
-//        string text{"Scores: 123 Pszczolkowski"};
         auto const size = 20;
         if (auto const geometry = font.text_geometry(text, size)) {
             auto const [w, h] = *geometry;
