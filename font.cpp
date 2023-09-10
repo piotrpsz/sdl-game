@@ -24,14 +24,14 @@ bool font_t::load(std::string const& file_name) noexcept {
     return true;
 }
 
-pair<f32, f32> font_t::string_geometry(string const& text, int const size) const noexcept {
+optional<pair<f32, f32>> font_t::text_geometry(const std::string& text, int size) const noexcept {
     int width{}, height{};
 
     if (auto it = data_.find(size); it != data_.end())
         if (TTF_SizeText(it->second, text.c_str(), &width, &height) == 0)
             return make_pair(static_cast<f32>(width), static_cast<f32>(height));
 
-    return make_pair(static_cast<f32>(width), static_cast<f32>(height));
+    return nullopt;
 }
 
 optional<SDL_Texture*> font_t::render_text(SDL_Renderer* const renderer, std::string const& text, int size, color_t color) const noexcept {

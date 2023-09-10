@@ -1,9 +1,7 @@
 #include "game.h"
 #include "drawer.h"
-#include <utility>
 #include <random>
 #include <iostream>
-#include "drawer.h"
 
 using namespace std;
 
@@ -174,16 +172,12 @@ void game_c::generate_output() noexcept {
     {
         string text{"Scores: 123"};
         auto const size = 30;
-        if (auto const [w, h] = font.string_geometry(text, size); w > 0. && h > 0.) {
+        if (auto const geometry = font.text_geometry(text, size)) {
+            auto const [w, h] = *geometry;
             rect_t const output_rect{100, 100, w, h};
-            if (auto r = font.render_text(drawer_.renderer(), text, size, {0, 255, 0, 255}); r.has_value())
-                SDL_RenderTexture(drawer_.renderer(), r.value(), nullptr, &output_rect);
+            if (auto const texture = font.render_text(drawer_.renderer(), text, size, {0, 255, 0, 255}))
+                SDL_RenderTexture(drawer_.renderer(), *texture, nullptr, &output_rect);
         }
-
-
-
-
-
     }
 
     // draw the ball

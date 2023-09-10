@@ -17,7 +17,7 @@ class font_t final {
     std::unordered_map<int, TTF_Font*> data_;
 public:
     bool load(std::string const& file_name) noexcept;
-    std::pair<f32, f32> string_geometry(std::string const& text, int size) const noexcept;
+    std::optional<std::pair<f32, f32>> text_geometry(std::string const& text, int size) const noexcept;
     std::optional<SDL_Texture*> render_text(SDL_Renderer* renderer, std::string const& text, int size, SDL_Color color) const noexcept;
 };
 
