@@ -48,7 +48,7 @@ public:
     vec2_t const& v() const noexcept { return velocity_; }
 
     void update(f32 delta_time, actors_t& actors) noexcept;
-    void output(drawer_c const& drawer) const noexcept;
+    void output(drawer_t const& drawer) const noexcept;
 
     friend std::ostream &operator<<(std::ostream &s, ball_t const &f);
 };

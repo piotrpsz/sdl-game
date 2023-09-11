@@ -11,14 +11,14 @@
 #include <iostream>
 #include "types.h"
 
-class drawer_c final {
+class drawer_t final {
     SDL_Renderer *renderer_;
 public:
-    drawer_c() = default;
+    drawer_t() = default;
 
-    ~drawer_c() = default;
+    ~drawer_t() = default;
 
-    explicit drawer_c(SDL_Window *const w) {
+    explicit drawer_t(SDL_Window *const w) {
         auto const flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
         if (auto r = SDL_CreateRenderer(w, nullptr, flags); r) {
             renderer_ = r;
@@ -34,7 +34,7 @@ public:
         }
     }
 
-    SDL_Renderer* operator()() {
+    SDL_Renderer* operator()() const {
         return renderer_;
     }
 

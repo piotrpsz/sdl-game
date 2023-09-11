@@ -20,16 +20,22 @@ void actors_t::update(f32 delta_time) noexcept {
         if (auto ball = std::get_if<ball_t>(&it))
             ball->update(delta_time, *this);
         else if (auto paddle = std::get_if<paddle_t>(&it))
-            paddle->update(delta_time, *this);
+            paddle->update(delta_time);
+        else if (auto label = std::get_if<label_t>(&it))
+            label->update();
     }
 }
 
-void actors_t::output(drawer_c const& drawer) const noexcept {
+void actors_t::output(drawer_t const& drawer) const noexcept {
     for (auto& it : data_) {
         if (auto const& ball = std::get_if<ball_t>(&it))
             ball->output(drawer);
         else if (auto const& paddle = std::get_if<paddle_t>(&it))
             paddle->output(drawer);
+        else if (auto const& wall = std::get_if<wall_t>(&it))
+            wall->output(drawer);
+        else if (auto label = std::get_if<label_t>(&it))
+            label->output(drawer);
     }
 }
 

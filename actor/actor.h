@@ -9,11 +9,13 @@
 
 #include "ball.h"
 #include "paddle.h"
+#include "wall.h"
+#include "label.h"
 #include <variant>
 #include <vector>
 #include <iterator>
 
-using actor_t = std::variant<ball_t, paddle_t>;
+using actor_t = std::variant<ball_t, paddle_t, wall_t, label_t>;
 
 class actors_t final {
     std::vector<actor_t> data_{};
@@ -28,7 +30,7 @@ public:
 public:
     void input(u8 const *state) noexcept;
     void update(f32 delta_time) noexcept;
-    void output(drawer_c const& drawer) const noexcept;
+    void output(drawer_t const& drawer) const noexcept;
 
     using iterator = std::vector<actor_t>::iterator;
     using const_iterator = std::vector<actor_t>::const_iterator;

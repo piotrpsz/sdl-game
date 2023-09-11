@@ -16,7 +16,7 @@ void paddle_t::input(u8 const *state) noexcept {
         direction_ = Direction::Down;
 }
 
-void paddle_t::update(f32 delta_time, actors_t const& actors) noexcept {
+void paddle_t::update(f32 delta_time) noexcept {
     if (direction_ == Direction::Up) {
         position_.y += -SPEED * delta_time;
         if (position_.y < (HEIGHT / 2.f + shared::THICKNESS + GAP_FROM_BORDER))
@@ -28,7 +28,7 @@ void paddle_t::update(f32 delta_time, actors_t const& actors) noexcept {
     }
 }
 
-void paddle_t::output(drawer_c const& drawer) const noexcept {
+void paddle_t::output(drawer_t const& drawer) const noexcept {
     drawer.draw_color({255, 0, 0, 255});
     drawer.fill_rect({position_.x - WIDTH/2.f, position_.y - HEIGHT/2.f, WIDTH, HEIGHT});
 }

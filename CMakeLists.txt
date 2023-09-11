@@ -7,6 +7,13 @@ find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 find_package(SDL3_image REQUIRED CONFIG REQUIRED COMPONENTS SDL3_image-shared)
 find_package(SDL3_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL3_ttf-shared)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 add_executable(sdl_game main.cpp
         game.cpp
         game.h
@@ -25,6 +32,10 @@ add_executable(sdl_game main.cpp
         actor/paddle.h
         actor/actor.cpp
         actor/actor.h
+        actor/wall.cpp
+        actor/wall.h
+        actor/label.cpp
+        actor/label.h
 )
 
 target_link_libraries(sdl_game PRIVATE

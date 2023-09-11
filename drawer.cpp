@@ -6,7 +6,7 @@
 //
 #include "drawer.h"
 
-void drawer_c::draw_circle(point_t const center, int const radius) const noexcept {
+void drawer_t::draw_circle(point_t const center, int const radius) const noexcept {
     auto v = radius * 8 * 35 / 49;
     auto const n = (v + 7) & -8;
     SDL_FPoint points[n];

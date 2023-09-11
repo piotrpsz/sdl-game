@@ -7,7 +7,7 @@
 #include "game.h"
 #include "drawer.h"
 #include "shared.h"
-#include <cstdio>
+#include "actor/label.h"
 using namespace std;
 
 bool game_c::initialize() noexcept {
@@ -17,7 +17,7 @@ bool game_c::initialize() noexcept {
     }
 
     int n{};
-    auto _ = SDL_GetDisplays(&n);
+    SDL_GetDisplays(&n);
     int x{}, y{};
     if (n > 1) {
         SDL_Rect r{};
@@ -37,7 +37,7 @@ bool game_c::initialize() noexcept {
     }
     SDL_SetWindowPosition(window_, x, y);
 
-    if (drawer_ = drawer_c(window_); !drawer_.ok())
+    if (drawer_ = drawer_t(window_); !drawer_.ok())
         return false;
 
     IMG_Init(IMG_INIT_PNG);
@@ -46,13 +46,21 @@ bool game_c::initialize() noexcept {
         SDL_Log("Can't init TTF library: %s", SDL_GetError());
         return false;
     }
-    font.load("/Users/piotr/Projects/cpp/sdl-game/assets/Carlito-Regular.ttf");
-//    font.load("/System/Library/Fonts/Helvetica.ttc");
 
     auto ball = ball_t({shared::WINDOW_WIDTH / 2.f, shared::WINDOW_HEIGHT / 2.f}, shared::texture_from_file(drawer_(), "../assets/tennis.png"));
-    auto paddle = paddle_t({6.f, shared::WINDOW_HEIGHT / 2.f});
+    auto paddle = paddle_t({6.f, shared::WINDOW_HEIGHT / 2.f}, ActorType::PADDLE_LEFT);
+    auto wall_top = wall_t({0, 0, shared::WINDOW_WIDTH, shared::THICKNESS}, ActorType::WALL_TOP);
+    auto wall_bottom = wall_t({0, shared::WINDOW_HEIGHT - shared::THICKNESS, shared::WINDOW_WIDTH, shared::THICKNESS}, ActorType::WALL_BOTTOM);
+    auto wall_right = wall_t({shared::WINDOW_WIDTH - shared::THICKNESS, 0, shared::THICKNESS, shared::WINDOW_WIDTH}, ActorType::WALL_RIGHT);
+    auto label = label_t("Scores: ", {2, 2}, 14, &shared::scores);
+
     actors_.push_back(ball);
     actors_.push_back(paddle);
+    actors_.push_back(wall_top);
+    actors_.push_back(wall_bottom);
+    actors_.push_back(wall_right);
+    actors_.push_back(label);
+
     return true;
 }
 
@@ -95,33 +103,9 @@ void game_c::update_game() noexcept {
 }
 
 void game_c::generate_output() noexcept {
-//    drawer_.draw_color({100, 100, 100, 255});
     drawer_.draw_color({20, 40, 60, 255});
+
     drawer_.clear();
-
-    //------- draw walls
-    drawer_.draw_color({255, 255, 255, 255});
-    // draw the top wall
-    drawer_.fill_rect({0, 0, shared::WINDOW_WIDTH, shared::THICKNESS});
-    // draw the bottom wall
-    drawer_.fill_rect({0, shared::WINDOW_HEIGHT - shared::THICKNESS, shared::WINDOW_WIDTH, shared::THICKNESS});
-    // draw the right wall
-    drawer_.fill_rect({shared::WINDOW_WIDTH - shared::THICKNESS, 0, shared::THICKNESS, shared::WINDOW_WIDTH});
-
-    {
-        char buffer[128];
-        snprintf(buffer, 128, "Scores: %d", shared::scores);
-        string text{buffer};
-        auto const size = 14;
-        if (auto const geometry = font.text_geometry(text, size)) {
-            auto const [w, h] = *geometry;
-            rect_t const output_rect{2, 2, w, h};
-            if (auto const texture = font.render_text(drawer_(), text, size, {0, 0, 0, 255}))
-
-                SDL_RenderTexture(drawer_(), *texture, nullptr, &output_rect);
-        }
-    }
-
     actors_.output(drawer_);
     drawer_.present();
 }

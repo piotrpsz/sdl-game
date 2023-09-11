@@ -9,7 +9,6 @@
 #include <SDL3/SDL.h>
 #include <SDL_image.h>
 #include "drawer.h"
-#include "font.h"
 #include "types.h"
 #include "actor/ball.h"
 #include "actor/paddle.h"
@@ -17,8 +16,7 @@
 
 class game_c final{
     SDL_Window* window_{};
-    font_t font{};
-    drawer_c drawer_{};
+    drawer_t drawer_{};
     u32 ticks_count_{};
     actors_t actors_{};
 public:

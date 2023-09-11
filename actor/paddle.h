@@ -25,20 +25,20 @@ class paddle_t final {
     };
     Direction direction_{Direction::Unknown};
     vec2_t position_{};
-    ActorType type_{ActorType::PADDLE};
+    ActorType type_;
 public:
     constexpr static f32 HEIGHT = 100.;
     constexpr static f32 WIDTH = 5.f;
 public:
     paddle_t() = default;
-    paddle_t(vec2_t const pos) : position_(pos) {}
+    paddle_t(vec2_t pos, ActorType type) : position_{pos}, type_{type} {}
 
     ActorType type() const noexcept { return type_; }
     vec2_t& pos() noexcept { return position_; }
     vec2_t const& pos() const noexcept { return position_; }
     void input(u8 const *state) noexcept;
-    void update(f32 delta_time, actors_t const& actors) noexcept;
-    void output(drawer_c const& drawer) const noexcept;
+    void update(f32 delta_time) noexcept;
+    void output(drawer_t const& drawer) const noexcept;
 
     friend std::ostream &operator<<(std::ostream &s, paddle_t const &f);
 };

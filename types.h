@@ -19,8 +19,10 @@ using rect_t = SDL_FRect;
 using point_t = SDL_FPoint;
 
 enum class ActorType {
+    GENERAL,
     BALL,
-    PADDLE
+    PADDLE_LEFT, PADDLE_RIGHT,
+    WALL_TOP, WALL_BOTTOM, WALL_RIGHT
 };
 
 #endif //SDL_TEST_TYPES_H

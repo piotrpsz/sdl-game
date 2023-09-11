@@ -10,7 +10,7 @@
 #include <iostream>
 using namespace std;
 
-void ball_t::output(drawer_c const& drawer) const noexcept {
+void ball_t::output(drawer_t const& drawer) const noexcept {
     rect_t rect{position_.x - BALL_RADIUS, position_.y-BALL_RADIUS, BALL_DIAMETER, BALL_DIAMETER};
     drawer.render_texture(texture_, rect);
 }
