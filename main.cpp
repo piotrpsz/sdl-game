@@ -1,4 +1,5 @@
 #include "game.h"
+#include "actor/ball.h"
 
 int main() {
     game_c game;

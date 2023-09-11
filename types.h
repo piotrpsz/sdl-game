@@ -15,4 +15,9 @@ using color_t = SDL_Color;
 using rect_t = SDL_FRect;
 using point_t = SDL_FPoint;
 
+enum class ActorType {
+    BALL,
+    PADDLE
+};
+
 #endif //SDL_TEST_TYPES_H

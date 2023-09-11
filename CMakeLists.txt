@@ -17,6 +17,14 @@ add_executable(sdl_game main.cpp
         types.h
         font.cpp
         font.h
+        actor/ball.cpp
+        actor/ball.h
+        shared.cpp
+        shared.h
 )
 
-target_link_libraries(sdl_game PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_ttf::SDL3_ttf)
+target_link_libraries(sdl_game PRIVATE
+        SDL3::SDL3
+        SDL3_image::SDL3_image
+        SDL3_ttf::SDL3_ttf
+)

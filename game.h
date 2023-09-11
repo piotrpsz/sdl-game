@@ -5,6 +5,7 @@
 #include "drawer.h"
 #include "font.h"
 #include "types.h"
+#include "actor/ball.h"
 
 enum class Direction {
     Unknown = 0,
@@ -25,16 +26,17 @@ class game_c final{
 
     SDL_Window* window_{};
     font_t font{};
-    SDL_Texture* ball_{};
+//    SDL_Texture* ball_{};
     drawer_c drawer_{};
     bool is_running{true};
     u32 ticks_count_{};
     int scores_{};
+    ball_t bullet_;
 
     Direction paddle_direction_{Direction::Unknown};
     vec2_t paddle_pos_{};
-    vec2_t ball_pos_{};
-    vec2_t ball_velocity_{};
+//    vec2_t ball_pos_{};
+//    vec2_t ball_velocity_{};
 
 public:
     ~game_c() { shutdown(); }
