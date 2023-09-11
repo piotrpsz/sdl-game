@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.26)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 project(sdl_game)
 
@@ -21,6 +21,10 @@ add_executable(sdl_game main.cpp
         actor/ball.h
         shared.cpp
         shared.h
+        actor/paddle.cpp
+        actor/paddle.h
+        actor/actor.cpp
+        actor/actor.h
 )
 
 target_link_libraries(sdl_game PRIVATE

@@ -1,7 +1,9 @@
 //
-// Created by Piotr Pszczółkowski on 10/09/2023.
+// MIT License
 //
-
+// Copyright (c) 2023 Piotr Pszczółkowski
+// E-mail: piotr@beesoft.pl
+//
 #include "font.h"
 #include <vector>
 #include <iostream>

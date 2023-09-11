@@ -1,5 +1,8 @@
 //
-// Created by Piotr Pszczółkowski on 11/09/2023.
+// MIT License
+//
+// Copyright (c) 2023 Piotr Pszczółkowski
+// E-mail: piotr@beesoft.pl
 //
 #include "shared.h"
 #include <random>
@@ -9,6 +12,8 @@ using namespace std;
 
 
 namespace shared {
+    int scores{};
+    bool is_running{true};
 
     f32 random_speed(f32 const start, f32 const end) {
         random_device rd;

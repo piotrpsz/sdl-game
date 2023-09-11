@@ -1,3 +1,9 @@
+//
+// MIT License
+//
+// Copyright (c) 2023 Piotr Pszczółkowski
+// E-mail: piotr@beesoft.pl
+//
 #include "drawer.h"
 
 void drawer_c::draw_circle(point_t const center, int const radius) const noexcept {

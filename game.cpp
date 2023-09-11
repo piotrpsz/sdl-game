@@ -1,14 +1,14 @@
+//
+// MIT License
+//
+// Copyright (c) 2023 Piotr Pszczółkowski
+// E-mail: piotr@beesoft.pl
+//
 #include "game.h"
 #include "drawer.h"
 #include "shared.h"
-#include <random>
-#include <iostream>
-#include <format>
 #include <cstdio>
-#include "shared.h"
 using namespace std;
-
-
 
 bool game_c::initialize() noexcept {
     if (auto err = SDL_Init(SDL_INIT_VIDEO); err) {
@@ -16,23 +16,22 @@ bool game_c::initialize() noexcept {
         return false;
     }
 
-
     int n{};
     auto _ = SDL_GetDisplays(&n);
     int x{}, y{};
     if (n > 1) {
         SDL_Rect r{};
         SDL_GetDisplayBounds(2, &r);
-        x = r.x + (r.w - WINDOW_WIDTH)/2;
-        y = r.y + (r.h - WINDOW_HEIGHT)/2;
+        x = r.x + (r.w - shared::WINDOW_WIDTH)/2;
+        y = r.y + (r.h - shared::WINDOW_HEIGHT)/2;
     } else {
         SDL_Rect r{};
         SDL_GetDisplayBounds(1, &r);
-        x = r.x + (r.w - WINDOW_WIDTH)/2;
-        y = r.y + (r.h - WINDOW_HEIGHT)/2;
+        x = r.x + (r.w - shared::WINDOW_WIDTH)/2;
+        y = r.y + (r.h - shared::WINDOW_HEIGHT)/2;
     }
 
-    if (window_ = SDL_CreateWindow("My SDL game", WINDOW_WIDTH, WINDOW_HEIGHT, 0); window_ == nullptr) {
+    if (window_ = SDL_CreateWindow("My SDL game", shared::WINDOW_WIDTH, shared::WINDOW_HEIGHT, 0); window_ == nullptr) {
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return false;
     }
@@ -50,42 +49,15 @@ bool game_c::initialize() noexcept {
     font.load("/Users/piotr/Projects/cpp/sdl-game/assets/Carlito-Regular.ttf");
 //    font.load("/System/Library/Fonts/Helvetica.ttc");
 
-/*
-    auto surface = IMG_Load("../assets/tennis.png");
-    if (surface == nullptr) {
-
-        SDL_Log("Failed to load texture file: %s", SDL_GetError());
-        return false;
-    }
-    auto texture = SDL_CreateTextureFromSurface(drawer_(), surface);
-    if (texture == nullptr) {
-        SDL_Log("Failed to convert surface to texture: %s", SDL_GetError());
-        return false;
-    }
-//    SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_BEST);
-
-    SDL_DestroySurface(surface);
-    ball_ = texture;
-*/
-    {
-        bullet_ = ball_t({WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f}, shared::texture_from_file(drawer_(), "../assets/tennis.png"));
-    }
-
-    paddle_pos_ = {6.f, WINDOW_HEIGHT / 2.f};
-//    ball_pos_ = {WINDOW_WIDTH / 2.f, WINDOW_HEIGHT / 2.f};
-
-//    auto const vx = shared::random_speed(-100.0f, -70.f);
-//    auto const vy = shared::random_speed(70.f, 100.f);
-//    ball_velocity_ = {vx, vy};
-//    cout << "vx: " << vx << ", vy: " << vy << '\n';
-//    ball_velocity_ = {-50.f, 90.f};
-
+    auto ball = ball_t({shared::WINDOW_WIDTH / 2.f, shared::WINDOW_HEIGHT / 2.f}, shared::texture_from_file(drawer_(), "../assets/tennis.png"));
+    auto paddle = paddle_t({6.f, shared::WINDOW_HEIGHT / 2.f});
+    actors_.push_back(ball);
+    actors_.push_back(paddle);
     return true;
 }
 
 void game_c::run_loop() noexcept {
-    while (is_running) {
+    while (shared::is_running) {
         process_input();
         update_game();
         generate_output();
@@ -97,20 +69,16 @@ void game_c::process_input() noexcept {
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_EVENT_QUIT:
-                is_running = false;
+                shared::is_running = false;
                 break;
         }
     }
 
     u8 const *state = SDL_GetKeyboardState(nullptr);
     if (state[SDL_SCANCODE_ESCAPE])
-        is_running = false;
+        shared::is_running = false;
 
-    paddle_direction_ = Direction::Unknown;
-    if (state[SDL_SCANCODE_UP])
-        paddle_direction_ = Direction::Up;
-    if (state[SDL_SCANCODE_DOWN])
-        paddle_direction_ = Direction::Down;
+    actors_.input(state);
 }
 
 void game_c::update_game() noexcept {
@@ -123,89 +91,7 @@ void game_c::update_game() noexcept {
     if (delta_time > .05f) delta_time = .05f;
     ticks_count_ = SDL_GetTicks();
 
-    if (paddle_direction_ == Direction::Up) {
-        paddle_pos_.y += -300.f * delta_time;
-        if (paddle_pos_.y < (PADDLE_HEIGHT / 2.f + THICKNESS + 1))
-            paddle_pos_.y = PADDLE_HEIGHT / 2.f + THICKNESS + 1;
-    } else if (paddle_direction_ == Direction::Down) {
-        paddle_pos_.y += 300.f * delta_time;
-        if (paddle_pos_.y > (WINDOW_HEIGHT - PADDLE_HEIGHT / 2.f - THICKNESS - 1))
-            paddle_pos_.y = WINDOW_HEIGHT - PADDLE_HEIGHT / 2.f - THICKNESS - 1;
-    }
-
-    // update ball position based on ball velocity
-    bullet_.update(delta_time);
-//    ball_pos_.x += ball_velocity_.x * delta_time;
-//    ball_pos_.y += ball_velocity_.y * delta_time;
-
-    //------- horizontal movement of the ball
-//    if (ball_velocity_.x < 0.f) {
-//        // The ball moves to the left
-//        auto diff = paddle_pos_.y - ball_pos_.y;
-//        diff = (diff > 0.f) ? diff : -diff;
-//        if (diff > PADDLE_HEIGHT / 2.f) {
-//            if ((ball_pos_.x - BALL_RADIUS) <= 0) {
-//                is_running = false;
-//                return;
-//            }
-//        } else if ((ball_pos_.x - BALL_RADIUS) <= ((paddle_pos_.x + PADDLE_WIDTH/2.0)-5.f)) {
-//            // the ball bounces off the paddle
-//            scores_ += 1;
-//            ball_velocity_.x *= -1.f;
-//        }
-//    } else if (ball_velocity_.x > 0.f) {
-//        // the ball moves to the right
-//        if ((ball_pos_.x + BALL_RADIUS) > RIGHT_BORDER)
-//            // the ball bounces off the right wall
-//            ball_velocity_.x *= -1.f;
-//    }
-
-    if (bullet_.v().x < 0.f) {
-        // The ball moves to the left
-        auto diff = paddle_pos_.y - bullet_.pos().y;
-        diff = (diff > 0.f) ? diff : -diff;
-        if (diff > PADDLE_HEIGHT / 2.f) {
-            if ((bullet_.pos().x - BALL_RADIUS) <= 0) {
-                is_running = false;
-                return;
-            }
-        } else if ((bullet_.pos().x - BALL_RADIUS) <= ((paddle_pos_.x + PADDLE_WIDTH/2.0)-5.f)) {
-            // the ball bounces off the paddle
-            scores_ += 1;
-            bullet_.v().x *= -1.f;
-        }
-    } else if (bullet_.v().x > 0.f) {
-        // the ball moves to the right
-        if ((bullet_.pos().x + BALL_RADIUS) > RIGHT_BORDER)
-            // the ball bounces off the right wall
-            bullet_.v().x *= -1.f;
-    }
-
-    //------- vertical movement of the ball
-//    if (ball_velocity_.y < 0.f) {
-//        // the ball moves upwards
-//        if ((ball_pos_.y - BALL_RADIUS) <= (TOP_BORDER-1.f))
-//            //the ball bounces off the upper wall
-//            ball_velocity_.y *= -1.f;
-//    } else if (ball_velocity_.y > 0.f) {
-//        // the ball moves downwards
-//        if ((ball_pos_.y + BALL_RADIUS) >= (BOTTOM_BORDER-3.f))
-//            // the ball bounces off the bottom wall
-//            ball_velocity_.y *= -1.f;
-//    }
-
-    if (bullet_.v().y < 0.f) {
-        // the ball moves upwards
-        if ((bullet_.pos().y - BALL_RADIUS) <= (TOP_BORDER-1.f /*??*/))
-            //the ball bounces off the upper wall
-            bullet_.v().y *= -1.f;
-    } else if (bullet_.v().y > 0.f) {
-        // the ball moves downwards
-        if ((bullet_.pos().y + BALL_RADIUS) >= (BOTTOM_BORDER-3.f))
-            // the ball bounces off the bottom wall
-            bullet_.v().y *= -1.f;
-    }
-
+    actors_.update(delta_time);
 }
 
 void game_c::generate_output() noexcept {
@@ -216,19 +102,15 @@ void game_c::generate_output() noexcept {
     //------- draw walls
     drawer_.draw_color({255, 255, 255, 255});
     // draw the top wall
-    drawer_.fill_rect({0, 0, WINDOW_WIDTH, THICKNESS});
+    drawer_.fill_rect({0, 0, shared::WINDOW_WIDTH, shared::THICKNESS});
     // draw the bottom wall
-    drawer_.fill_rect({0, WINDOW_HEIGHT - THICKNESS, WINDOW_WIDTH, THICKNESS});
+    drawer_.fill_rect({0, shared::WINDOW_HEIGHT - shared::THICKNESS, shared::WINDOW_WIDTH, shared::THICKNESS});
     // draw the right wall
-    drawer_.fill_rect({WINDOW_WIDTH - THICKNESS, 0, THICKNESS, WINDOW_WIDTH});
-
-    // draw the paddle paddle
-    drawer_.draw_color({255, 0, 0, 255});
-    drawer_.fill_rect({paddle_pos_.x - PADDLE_WIDTH/2.f, paddle_pos_.y - PADDLE_HEIGHT/2.f, PADDLE_WIDTH, PADDLE_HEIGHT});
+    drawer_.fill_rect({shared::WINDOW_WIDTH - shared::THICKNESS, 0, shared::THICKNESS, shared::WINDOW_WIDTH});
 
     {
         char buffer[128];
-        snprintf(buffer, 128, "Scores: %d", scores_);
+        snprintf(buffer, 128, "Scores: %d", shared::scores);
         string text{buffer};
         auto const size = 14;
         if (auto const geometry = font.text_geometry(text, size)) {
@@ -240,14 +122,7 @@ void game_c::generate_output() noexcept {
         }
     }
 
-    // draw the ball
-//    drawer_.draw_color({255, 255, 255, 255});
-//    drawer_.draw_circle({ball_pos_.x, ball_pos_.y}, static_cast<int>(THICKNESS / 2.f));
-//    rect_t r{ball_pos_.x - BALL_RADIUS/2.f, ball_pos_.y-BALL_RADIUS/2.f, 2.f * BALL_RADIUS, 2.f * BALL_RADIUS};
-//    if (auto retv = SDL_RenderTexture(drawer_(), ball_, nullptr, &r); retv)
-//        SDL_Log("Failed to render texture: %s", SDL_GetError());
-
-    bullet_.output(drawer_());
+    actors_.output(drawer_);
     drawer_.present();
 }
 

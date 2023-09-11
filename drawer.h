@@ -1,3 +1,9 @@
+//
+// MIT License
+//
+// Copyright (c) 2023 Piotr Pszczółkowski
+// E-mail: piotr@beesoft.pl
+//
 #ifndef SDL_TEST_DRAWER_H
 #define SDL_TEST_DRAWER_H
 
@@ -36,12 +42,17 @@ public:
         return renderer_ != nullptr;
     }
 
-    void draw_color(u8 const r, u8 const g, u8 const b, u8 const a) {
+    void render_texture(SDL_Texture* const texture, rect_t rect) const noexcept {
+        if (SDL_RenderTexture(renderer_, texture, nullptr, &rect) != 0)
+            SDL_Log("Failed to render texture: %s", SDL_GetError());
+    }
+
+    void draw_color(u8 const r, u8 const g, u8 const b, u8 const a) const noexcept{
         if (SDL_SetRenderDrawColor(renderer_, r, g, b, a) != 0)
             SDL_Log("Failed to set color(1)");
     }
 
-    void draw_color(color_t c) {
+    void draw_color(color_t c) const noexcept{
         if (SDL_SetRenderDrawColor(renderer_, c.r, c.g, c.b, c.a) != 0)
             SDL_Log("Failed to set color(2): %s", SDL_GetError());
     }

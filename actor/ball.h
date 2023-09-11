@@ -1,11 +1,21 @@
+//
+// MIT License
+//
+// Copyright (c) 2023 Piotr Pszczółkowski
+// E-mail: piotr@beesoft.pl
+//
 #ifndef SDL_GAME_BALL_H
 #define SDL_GAME_BALL_H
 
 #include "../types.h"
 #include "../shared.h"
+#include "../drawer.h"
 #include <iostream>
 #include <string>
 #include <SDL.h>
+
+// forward declaration
+class actors_t;
 
 class ball_t final {
     static constexpr f32 BALL_RADIUS = 7.f;
@@ -37,8 +47,10 @@ public:
     vec2_t& v() noexcept { return velocity_; }
     vec2_t const& v() const noexcept { return velocity_; }
 
-    void update(f32 delta_time) noexcept;
-    void output(SDL_Renderer* renderer) noexcept;
+    void update(f32 delta_time, actors_t& actors) noexcept;
+    void output(drawer_c const& drawer) const noexcept;
+
+    friend std::ostream &operator<<(std::ostream &s, ball_t const &f);
 };
 
 
