@@ -12,11 +12,13 @@
 using u8 = uint8_t;
 using u32 = uint32_t;
 using f32 = float;
+using uint = unsigned int;
 
-struct vec2_t { f32 x, y; };
+struct vec3_t { f32 x, y, z; };
 using color_t = SDL_Color;
 using rect_t = SDL_FRect;
 using point_t = SDL_FPoint;
+using matrix4_t = f32[4][4];
 
 enum class ActorType {
     GENERAL,

@@ -8,14 +8,16 @@
 #include <string>
 #include <unordered_map>
 #include <optional>
+#include "../types.h"
 
 class audio_t {
     constexpr static int MAX_PATH_LEMGTH = 512;
     FMOD::Studio::System *system_{};
     FMOD::System *low_level_system_{};
-    std::unordered_map<std::string, FMOD::Studio::Bank *> banks_;
-    std::unordered_map<std::string, FMOD::Studio::EventDescription *> events_;
-    std::unordered_map<std::string, FMOD::Studio::Bus *> buses_;
+    std::unordered_map<std::string, FMOD::Studio::Bank *> banks_{};
+    std::unordered_map<std::string, FMOD::Studio::EventDescription *> events_{};
+    std::unordered_map<std::string, FMOD::Studio::Bus *> buses_{};
+    std::unordered_map<uint, FMOD::Studio::EventInstance*> event_instances_{};
 
     class game_c *game_;
 
@@ -25,14 +27,15 @@ public:
 
     ~audio_t() = default;
 
-    bool inittialize();
+    bool initialize();
 
     void shutdown();
 
-    bool load_bank(std::string const& name);
+    void load_bank(std::string const& path) noexcept;
 
-    void unload_bank(std::string const& name);
+    void unload_bank(std::string const& path);
     void unload_all_banks();
+
 
     std::optional<std::string> get_path(auto* o) {
         char name[MAX_PATH_LEMGTH];
@@ -80,6 +83,10 @@ public:
 
         return vec;
     }
+
+protected:
+    friend class sound_event_t;
+    FMOD::Studio::EventInstance* event_instance(uint id) const noexcept;
 };
 
 

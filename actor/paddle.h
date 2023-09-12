@@ -9,6 +9,7 @@
 
 #include "../types.h"
 #include "../drawer.h"
+#include "../math/math.h"
 #include <iostream>
 
 // forward declaration

@@ -19,7 +19,8 @@ set(FMOD_CORE_DLL_LIB_L "${FMOD_CORE_DIR}/lib/libfmodL.dylib")
 
 add_library(fmod_studio SHARED IMPORTED)
 add_library(fmod_studio_l SHARED IMPORTED)
-add_library(fmod_core SHARED IMPORTED)
+add_library(fmod_core SHARED IMPORTED
+        math/vec2.h)
 add_library(fmod_core_l SHARED IMPORTED)
 
 set_property(TARGET fmod_studio PROPERTY IMPORTED_LOCATION "${FMOD_STUDIO_DLL_LIB}")
@@ -63,8 +64,12 @@ add_executable(sdl_game main.cpp
         actor/wall.h
         actor/label.cpp
         actor/label.h
-        audio.cpp
-        audio.h
+        fmod/audio.cpp
+        fmod/audio.h
+        fmod/sound_event.cpp
+        fmod/sound_event.h
+        math/math.h
+        math/vec2.h
 )
 
 target_link_libraries(sdl_game PRIVATE

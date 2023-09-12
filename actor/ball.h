@@ -10,6 +10,7 @@
 #include "../types.h"
 #include "../shared.h"
 #include "../drawer.h"
+#include "../math/math.h"
 #include <iostream>
 #include <string>
 #include <SDL.h>
