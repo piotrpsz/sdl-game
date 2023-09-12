@@ -8,6 +8,7 @@
 #include "drawer.h"
 #include "shared.h"
 #include "actor/label.h"
+
 using namespace std;
 
 bool game_c::initialize() noexcept {
