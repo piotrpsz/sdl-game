@@ -11,8 +11,11 @@
 using namespace std;
 
 void ball_t::output(drawer_t const& drawer) const noexcept {
-    rect_t rect{position_.x - BALL_RADIUS, position_.y-BALL_RADIUS, BALL_DIAMETER, BALL_DIAMETER};
-    drawer.render_texture(texture_, rect);
+    drawer.draw_color({255, 255, 0, 255});
+    drawer.draw_filled_circle(position_.x, position_.y, BALL_RADIUS);
+
+//    rect_t rect{position_.x - BALL_RADIUS, position_.y-BALL_RADIUS, BALL_DIAMETER, BALL_DIAMETER};
+//    drawer.render_texture(texture_, rect);
 }
 
 void ball_t::update(f32 delta_time, actors_t& actors) noexcept {
@@ -30,7 +33,7 @@ void ball_t::update(f32 delta_time, actors_t& actors) noexcept {
                 return;
             }
         }
-        else if ((position_.x - BALL_RADIUS) <= ((paddle->pos().x + paddle_t::WIDTH/2.f)-5.f)) {
+        else if ((position_.x - BALL_RADIUS) <= (paddle->pos().x + paddle_t::WIDTH/2.f)) {
             shared::scores++;
             velocity_.x *= -1.f;
         }
@@ -43,12 +46,12 @@ void ball_t::update(f32 delta_time, actors_t& actors) noexcept {
 
     if (velocity_.y < 0.f) {
         // the ball moves upwards
-        if ((position_.y - BALL_RADIUS) <= (shared::TOP_BORDER-1.f ))
+        if ((position_.y - BALL_RADIUS) <= shared::TOP_BORDER)
             //the ball bounces off the upper wall
             velocity_.y *= -1.f;
     } else if (velocity_.y > 0.f) {
         // the ball moves downwards
-        if ((position_.y + BALL_RADIUS) >= (shared::BOTTOM_BORDER - 3.f))
+        if ((position_.y + BALL_RADIUS) >= shared::BOTTOM_BORDER)
             // the ball bounces off the bottom wall
             velocity_.y *= -1.f;
     }

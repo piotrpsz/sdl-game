@@ -4,6 +4,7 @@
 
 #include "sound_event.h"
 #include "audio.h"
+#include "../math/math.h"
 using namespace std;
 
 bool sound_event_t::valid() const noexcept {

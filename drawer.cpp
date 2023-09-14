@@ -43,3 +43,35 @@ void drawer_t::draw_circle(point_t const center, int const radius) const noexcep
     }
     SDL_RenderPoints(renderer_, points, count);
 }
+
+void drawer_t::draw_filled_circle(f32 x, f32 y, f32 radius) const noexcept {
+    f32 offsetx{};
+    f32 offsety{radius};
+    f32 d{radius - 1};
+    int status{};
+
+    while (offsety >= offsetx) {
+        status += SDL_RenderLine(renderer_, x - offsety, y + offsetx, x + offsety, y + offsetx);
+        status += SDL_RenderLine(renderer_, x - offsetx, y + offsety, x + offsetx, y + offsety);
+        status += SDL_RenderLine(renderer_, x - offsetx, y - offsety, x + offsetx, y - offsety);
+        status += SDL_RenderLine(renderer_, x - offsety, y - offsetx, x + offsety, y - offsetx);
+
+        if (status) {
+            return;
+        }
+
+        if (d >= 2*offsetx) {
+            d -= 2*offsetx + 1;
+            offsetx +=1;
+        }
+        else if (d < 2 * (radius - offsety)) {
+            d += 2 * offsety - 1;
+            offsety -= 1;
+        }
+        else {
+            d += 2 * (offsety - offsetx - 1);
+            offsety -= 1;
+            offsetx += 1;
+        }
+    }
+}

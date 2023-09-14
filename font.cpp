@@ -40,7 +40,7 @@ optional<pair<f32, f32>> font_t::text_geometry(const std::string& text, int size
 
 optional<SDL_Texture*> font_t::render_text(SDL_Renderer* const renderer, std::string const& text, int size, color_t color) const noexcept {
     if (auto it = data_.find(size); it != data_.end()) {
-//        if (auto surface = TTF_RenderUTF8_Solid(it->second, text.c_str(), color); surface) {
+//        if (auto surface = TTF_RenderUTF8_Blended(it->second, text.c_str(), color); surface) {
         if (auto surface = TTF_RenderText_Blended(it->second, text.c_str(), color); surface) {
             auto texture = SDL_CreateTextureFromSurface(renderer, surface);
             if (texture == nullptr) {

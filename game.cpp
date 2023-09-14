@@ -53,7 +53,7 @@ bool game_c::initialize() noexcept {
     auto wall_top = wall_t({0, 0, shared::WINDOW_WIDTH, shared::THICKNESS}, ActorType::WALL_TOP);
     auto wall_bottom = wall_t({0, shared::WINDOW_HEIGHT - shared::THICKNESS, shared::WINDOW_WIDTH, shared::THICKNESS}, ActorType::WALL_BOTTOM);
     auto wall_right = wall_t({shared::WINDOW_WIDTH - shared::THICKNESS, 0, shared::THICKNESS, shared::WINDOW_WIDTH}, ActorType::WALL_RIGHT);
-    auto label = label_t("Scores: ", {2, 2}, 14, &shared::scores);
+    auto label = label_t("Scores:  ", {2, 2}, 14, &shared::scores);
 
     actors_.push_back(ball);
     actors_.push_back(paddle);

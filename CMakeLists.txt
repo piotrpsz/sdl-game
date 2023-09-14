@@ -19,8 +19,8 @@ set(FMOD_CORE_DLL_LIB_L "${FMOD_CORE_DIR}/lib/libfmodL.dylib")
 
 add_library(fmod_studio SHARED IMPORTED)
 add_library(fmod_studio_l SHARED IMPORTED)
-add_library(fmod_core SHARED IMPORTED
-        math/vec2.h)
+add_library(fmod_core SHARED IMPORTED)
+
 add_library(fmod_core_l SHARED IMPORTED)
 
 set_property(TARGET fmod_studio PROPERTY IMPORTED_LOCATION "${FMOD_STUDIO_DLL_LIB}")
@@ -69,7 +69,14 @@ add_executable(sdl_game main.cpp
         fmod/sound_event.cpp
         fmod/sound_event.h
         math/math.h
-        math/vec2.h
+        math/vec2.cpp math/vec2.h
+        math/vec3.cpp math/vec3.h
+        math/matrix4.cpp
+        math/matrix4.h
+        math/matrix3.cpp
+        math/matrix3.h
+        math/quaternion.cpp
+        math/quaternion.h
 )
 
 target_link_libraries(sdl_game PRIVATE

@@ -6,6 +6,7 @@
 #include <fmod_studio.hpp>
 #include <fmod_errors.h>
 #include <string>
+#include "../math/math.h"
 
 class sound_event_t {
     class audio_t* system_{};

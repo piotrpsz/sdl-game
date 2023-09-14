@@ -12,25 +12,25 @@ using namespace std;
 /// Initialization of FMOD system.
 bool audio_t::initialize() {
     // Initialize debug logging
-    if (auto err = FMOD::Debug_Initialize(FMOD_DEBUG_LEVEL_ERROR, FMOD_DEBUG_MODE_TTY); err != FMOD_OK) {
+    if (auto err = FMOD::Debug_Initialize(FMOD_DEBUG_LEVEL_ERROR, FMOD_DEBUG_MODE_TTY)) {
         SDL_Log("Failed to debug initialization: %s", FMOD_ErrorString(err));
         return false;
     }
 
     // Create FMOD studio system object
-    if (auto err = FMOD::Studio::System::create(&system_); err != FMOD_OK) {
+    if (auto err = FMOD::Studio::System::create(&system_)) {
         SDL_Log("Failed to create FMOD system: %s", FMOD_ErrorString(err));
         return false;
     }
 
     // Initialize FMOD studio system
-    if (auto err = system_->initialize(512, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL, nullptr); err != FMOD_OK) {
+    if (auto err = system_->initialize(512, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL, nullptr)) {
         SDL_Log("Failed to initialize FMOD system: %s", FMOD_ErrorString(err));
         return false;
     }
 
     // Save the low-level system pointer
-    if (auto err = system_->getCoreSystem(&low_level_system_); err != FMOD_OK) {
+    if (auto err = system_->getCoreSystem(&low_level_system_)) {
         SDL_Log("Failed to obtain FMOD core system: %s", FMOD_ErrorString(err));
         return false;
     }
@@ -42,7 +42,7 @@ bool audio_t::initialize() {
 void audio_t::shutdown() {
     unload_all_banks();
     if (system_)
-        if (auto err = system_->release(); err != FMOD_OK)
+        if (auto err = system_->release())
             SDL_Log("Failed to release: %s", FMOD_ErrorString(err));
 }
 
@@ -52,14 +52,14 @@ void audio_t::load_bank(string const& path) noexcept {
         return;
 
     // try to load bank
-    FMOD::Studio::Bank *bank{};
-    if (auto err = system_->loadBankFile(path.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank); err != FMOD_OK) {
+    bank_t* bank{};
+    if (auto err = system_->loadBankFile(path.c_str(), FMOD_STUDIO_LOAD_BANK_NORMAL, &bank)) {
         SDL_Log("Failed to load bank file: %s", FMOD_ErrorString(err));
         return;
     }
     banks_.emplace(path, bank);
 
-    if (auto err = bank->loadSampleData(); err != FMOD_OK) {
+    if (auto err = bank->loadSampleData()) {
         SDL_Log("Failed to load sample data of bank: %s", FMOD_ErrorString(err));
         return;
     }
